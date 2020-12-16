@@ -26,14 +26,14 @@ def open_file_excel():
     try:
         df_test = pd.read_excel(filename)
         if all(elem in df_test.columns for elem in dataframe.LIST_COLUMNS):
-            msg = "Le fichier "+str(filename)+" est pret a analyser"
-            messagebox.showinfo(title="Information", message=msg)
+            msg = "Le fichier "+str(filename)+" est prêt à être analysé"
+            messagebox.showinfo(title="Import des données", message=msg)
         else:
-            msg = "Le fichier "+str(filename)+" ne contient pas les parametres demandes"
-            messagebox.showinfo(title="Information", message=msg)
+            msg = "Le fichier "+str(filename)+" ne contient pas les paramêtres demandés"
+            messagebox.showinfo(title="Import des données", message=msg)
     except:
         msg = "Le fichier "+str(filename)+" n'est pas un fichier excel"
-        messagebox.showinfo(title="Information", message=msg)
+        messagebox.showinfo(title="Import des données", message=msg)
     else:
         source_excel_entry.insert(0, filename)
         df = dataframe.dataframe(filename)
@@ -44,45 +44,61 @@ def open_file_excel():
 # Verify user
 def verify_user_button():
     """
-    Retourner le nombre de personne dont on va envoyer le mail
+    Retourne un message d'information sur le nombre d'arbres pour lesquels la relance est à faire
     """
     #Excel = source_excel_entry.get()
     # Messagebox
     if len(df_return) > 1:
-        msg = "Il y a "+str(len(df_return))+" personnes qui ont la date de relancement aujourd'hui"
+        msg = "Il y a "+str(len(df_return))+" arbres pour lesquels une relance est à effectuer"
+    elif len(df_return) == 1:
+        msg = "Il y a un arbre pour lequel une relance est à effectuer"
     else:
-        msg = "Il y a "+str(len(df_return))+" personne qui ont la date de relancement aujourd'hui"
+        msg = "Il n'y a pas de relance à effectuer"
     messagebox.showinfo(title="Information", message=msg)
     
 def produce_mail_button():
     """
-    Retourner le nombre de personne dont on va envoyer le mail
+    Retourne un message d'informations sur le nombre de clients pour qui on va créer un brouillon
     """
-    if len(df_return) > 0:
-        msg ="Vous allez creer des brouillons"
-        messagebox.askokcancel(title="??", message=msg)
-        msg = "brouillons ont reussi a creer"
-        messagebox.showinfo(title="Information", message=msg)
+    if len(df_return) > 1:
+        msg = "Vous allez créer "+str(len(df_return))+" brouillons"
+        messagebox.askokcancel(title="Génération de mail", message=msg)
+        # étape de vérification
+        msg = "Les brouillons ont bien été créés"
+        messagebox.showinfo(title="Génération de mail", message=msg)
+    elif len(df_return) == 1:
+        msg = "Vous allez créer un brouillon"
+        messagebox.askokcancel(title="Génération de mail", message=msg)
+        # étape de vérification
+        msg = "Le brouillon a bien été créé"
+        messagebox.showinfo(title="Génération de mail", message=msg)
     else:
-        msg = "Il y a "+str(len(df_return))+" personne qui ont la date de relancement aujourd'hui"
-        messagebox.showinfo(title="Information", message=msg)
+        msg = "Il n'y a aucun mail à générer"
+        messagebox.showinfo(title="Génération de mail", message=msg)
     
-def sent_mail_button():
+def send_mail_button():
     """
-    Retourner le nombre de personne dont on va envoyer le mail
+    Retourne un message d'informations sur le nombre de clients pour qui on va envoyer un mail
     """
-    if len(df_return) > 0:
-        msg1 ="Vous allez envoyer des mails"
-        messagebox.askokcancel(title="??", message=msg1)
-        msg = "mails ont reussi a envoyer"
-        messagebox.showinfo(title="Information", message=msg)
+    if len(df_return) > 1:
+        msg ="Vous allez envoyer "+str(len(df_return))+" mails"
+        messagebox.askokcancel(title="Envoi de mail", message=msg)
+        # étape de vérification
+        msg = "Les mails ont bien été envoyés"
+        messagebox.showinfo(title="Envoi de mail", message=msg)
+    elif len(df_return) == 1:
+        msg ="Vous allez envoyer un mail"
+        messagebox.askokcancel(title="Envoi de mail", message=msg)
+        # étape de vérification
+        msg = "Le mail a bien été envoyé"
+        messagebox.showinfo(title="Envoi de mail", message=msg)
     else:
-        msg = "Il y a "+str(len(df_return))+" personne qui ont la date de relancement aujourd'hui"
-        messagebox.showinfo(title="Information", message=msg)
+        msg = "Il n'y a aucun mail à envoyer"
+        messagebox.showinfo(title="Envoi de mail", message=msg)
     
 # Create window
 window = Tk()
-window.title("ONF")
+window.title("ONF: Interface de relance client")
 window.config(padx=20, pady=20)
 
 # Canvas
@@ -92,11 +108,11 @@ canvas.create_image(100,100,image=logo_img)
 canvas.grid(row=0,column=1)
 
 # Labels
-source_excel = Label(text="File Excel")
+source_excel = Label(text="Fichier Excel")
 source_excel.grid(row=1, column=0)
-email_label = Label(text="Email")
+email_label = Label(text="Email outlook")
 email_label.grid(row=2, column=0)
-password_label = Label(text="Password")
+password_label = Label(text="Mot de passe")
 password_label.grid(row=3, column=0)
 
 # Entries
@@ -109,16 +125,16 @@ password_entry.grid(row=3, column=1)
 
 # Button
 # Open file excel
-open_file_button = Button(text="Open file Excel",command=open_file_excel)
+open_file_button = Button(text="Ouvrir fichier Excel",command=open_file_excel)
 open_file_button.grid(row=1, column=3)
 # Verify contenu file Excel
-verify_button = Button(text="Verify User",width=15,command=verify_user_button)
+verify_button = Button(text="Vérification des relances",width=25,command=verify_user_button)
 verify_button.grid(row=4, column=1)
 # Create crafts
-produce_mail_button = Button(text="Produce mail",width=15,command=produce_mail_button)
+produce_mail_button = Button(text="Créer des brouillons de mails",width=25,command=produce_mail_button)
 produce_mail_button.grid(row=5, column=1)
 # Sent mail
-sent_mail_button = Button(text="Sent mail",width=15,command=sent_mail_button)
-sent_mail_button.grid(row=6, column=1)
+send_mail_button = Button(text="Créer et envoyer des mails",width=25,command=send_mail_button)
+send_mail_button.grid(row=6, column=1)
 
 window.mainloop()

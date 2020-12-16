@@ -20,7 +20,7 @@ import time
 
 
 class mail:
-    def __init__(self, email_sender='gemalabonf@outlook.fr', password='Test_pour_Appli', dataframe_user):
+    def __init__(self, dataframe_user, email_sender='gemalabonf@outlook.fr', password='Test_pour_Appli'):
         self.email_sender = email_sender
         self.password = password
         self.dataframe_user =dataframe_user
