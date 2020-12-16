@@ -10,7 +10,8 @@ Created on Wed Dec  9 12:45:40 2020
 from tkinter import *
 from tkinter import messagebox
 from tkinter import filedialog
-import dataframe 
+import dataframe
+import pandas as pd 
 #from tkFileDialog import askdirectory
 
 
@@ -22,11 +23,22 @@ def open_file_excel():
     """
     global df_return
     filename = filedialog.askopenfilename()
-    affiche = Label(text=filename)
-    affiche.grid(row=1,column=1)
-    df = dataframe.dataframe(filename)
-    df.convert()
-    df_return = df.get_info_user_relance()
+    try:
+        df_test = pd.read_excel(filename)
+        if all(elem in df_test.columns for elem in dataframe.LIST_COLUMNS):
+            msg = "Le fichier "+str(filename)+" est pret a analyser"
+            messagebox.showinfo(title="Information", message=msg)
+        else:
+            msg = "Le fichier "+str(filename)+" ne contient pas les parametres demandes"
+            messagebox.showinfo(title="Information", message=msg)
+    except:
+        msg = "Le fichier "+str(filename)+" n'est pas un fichier excel"
+        messagebox.showinfo(title="Information", message=msg)
+    else:
+        source_excel_entry.insert(0, filename)
+        df = dataframe.dataframe(filename)
+        df.convert()
+        df_return = df.get_info_user_relance()
     #print(df_return)
      
 # Verify user
@@ -88,8 +100,8 @@ password_label = Label(text="Password")
 password_label.grid(row=3, column=0)
 
 # Entries
-#source_excel_entry = Entry(width=35)
-#source_excel_entry.grid(row=1, column=1)
+source_excel_entry = Entry(width=35)
+source_excel_entry.grid(row=1, column=1)
 email_entry = Entry(width=35)
 email_entry.grid(row=2,column=1)
 password_entry = Entry(width=35, show='*')
