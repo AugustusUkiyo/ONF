@@ -11,6 +11,7 @@ from tkinter import *
 from tkinter import messagebox
 from tkinter import filedialog
 import dataframe
+import mail
 import pandas as pd 
 #from tkFileDialog import askdirectory
 
@@ -21,7 +22,7 @@ import pandas as pd
 def open_file_excel():
     """
     """
-    global df_return
+    #global df_return
     filename = filedialog.askopenfilename()
     try:
         df_test = pd.read_excel(filename)
@@ -36,9 +37,9 @@ def open_file_excel():
         messagebox.showinfo(title="Information", message=msg)
     else:
         source_excel_entry.insert(0, filename)
-        df = dataframe.dataframe(filename)
-        df.convert()
-        df_return = df.get_info_user_relance()
+        #df = dataframe.dataframe(filename)
+        #df.convert()
+        #df_return = df.get_info_user_relance()
     #print(df_return)
      
 # Verify user
@@ -48,37 +49,78 @@ def verify_user_button():
     """
     #Excel = source_excel_entry.get()
     # Messagebox
-    if len(df_return) > 1:
-        msg = "Il y a "+str(len(df_return))+" personnes qui ont la date de relancement aujourd'hui"
+    try:
+        filename = source_excel_entry.get()
+        df = dataframe.dataframe(filename)
+        df.convert()
+        global mail_return 
+        df_return = df.get_info_user_relance()
+        msg = "fichier excel est charge"
+        messagebox.showinfo(title="Information", message=msg)
+        
+    except:
+        msg = "ouvrir le fichier excel svp"
+        messagebox.showerror(title="Information", message=msg)
     else:
-        msg = "Il y a "+str(len(df_return))+" personne qui ont la date de relancement aujourd'hui"
-    messagebox.showinfo(title="Information", message=msg)
+        if len(df_return) > 1:
+            msg = "Il y a "+str(len(df_return))+" personnes qui ont la date de relancement aujourd'hui"
+        else:
+            msg = "Il y a "+str(len(df_return))+" personne qui ont la date de relancement aujourd'hui"
+            messagebox.showinfo(title="Information", message=msg)
+        
+        if email_entry.get() != '' and password_entry.get() != '':
+            # Creer objet mail
+            #mail_return = mail.mail(email_entry.get(), password_entry.get(), df_return)
+            mail_return = mail.mail(df_return)
+            msg = "email et le mot de passe ont bien rempli"
+            messagebox.showinfo(title="Information ", message=msg)          
+        else:
+            msg = "remplir email et le mot de passe svp"
+            messagebox.showerror(title="Information", message=msg)
     
 def produce_mail_button():
     """
     Retourner le nombre de personne dont on va envoyer le mail
     """
-    if len(df_return) > 0:
-        msg ="Vous allez creer des brouillons"
-        messagebox.askokcancel(title="??", message=msg)
-        msg = "brouillons ont reussi a creer"
-        messagebox.showinfo(title="Information", message=msg)
-    else:
-        msg = "Il y a "+str(len(df_return))+" personne qui ont la date de relancement aujourd'hui"
-        messagebox.showinfo(title="Information", message=msg)
+    try:
+        if len(mail_return.dataframe_user) > 0:
+            msg ="Vous allez creer des brouillons"
+            messagebox.askokcancel(title="??", message=msg)
+            mail_return.create_draft()
+    
+            msg = "brouillons ont reussi a creer"
+            messagebox.showinfo(title="Information", message=msg)
+    
+                
+                
+            
+        else:
+            msg = "Il y a "+str(len(mail_return.dataframe_user))+" personne qui ont la date de relancement aujourd'hui"
+            messagebox.showinfo(title="Information", message=msg)
+    except:
+        msg = "Appuyer sur le button verify user d'aborde"
+        messagebox.showerror(title="Information", message=msg)
     
 def sent_mail_button():
     """
     Retourner le nombre de personne dont on va envoyer le mail
     """
-    if len(df_return) > 0:
-        msg1 ="Vous allez envoyer des mails"
-        messagebox.askokcancel(title="??", message=msg1)
-        msg = "mails ont reussi a envoyer"
-        messagebox.showinfo(title="Information", message=msg)
-    else:
-        msg = "Il y a "+str(len(df_return))+" personne qui ont la date de relancement aujourd'hui"
-        messagebox.showinfo(title="Information", message=msg)
+    try:
+        if len(mail_return.dataframe_user) > 0:
+            msg1 ="Vous allez envoyer des mails"
+            messagebox.askokcancel(title="??", message=msg1)
+            mail_return.send_emails()
+            msg = "mails ont reussi a envoyer"
+            messagebox.showinfo(title="Information", message=msg)
+    
+            
+        else:
+            msg = "Il y a "+str(len(mail_return.dataframe_user))+" personne qui ont la date de relancement aujourd'hui"
+            messagebox.showinfo(title="Information", message=msg)
+    
+    except:
+        msg = "Appuyer sur le button verify user d'aborde"
+        messagebox.showerror(title="Information", message=msg)
     
 # Create window
 window = Tk()
@@ -104,6 +146,7 @@ source_excel_entry = Entry(width=35)
 source_excel_entry.grid(row=1, column=1)
 email_entry = Entry(width=35)
 email_entry.grid(row=2,column=1)
+email_entry.focus()
 password_entry = Entry(width=35, show='*')
 password_entry.grid(row=3, column=1)
 
