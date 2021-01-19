@@ -9,8 +9,9 @@ Created on Wed Dec  9 12:45:41 2020
 import pandas as pd
 import numpy as np
 from datetime import datetime
+from datetime import timedelta
 
-LIST_COLUMNS = ['GlobalID', 'Nom du client', 'Coordonnées mail', 'Numéro de l\'arbre', 
+LIST_COLUMNS = ['GlobalID', 'Nom du client', 'Coordonnées mail', 'Site', 'Numéro de l\'arbre', 
                    "Date du relevé", "Nom français de l\'arbre", 'Type de contrôle/suivi', 
                    'Date de relance pour contrôle/suivi', "Type d'intervention 1", 
                    'Date de relance pour intervention 1', "Type d'intervention 2", 
@@ -18,9 +19,10 @@ LIST_COLUMNS = ['GlobalID', 'Nom du client', 'Coordonnées mail', 'Numéro de l\
 #file_excel = 'Excel_type.xlsx'
 
 class dataframe:
-    def __init__(self, file_excel,date_debut, date_fin):
+    def __init__(self, file_excel, date_debut, date_fin):
         self.df = pd.read_excel(file_excel) # sheet_name='DVS_v2_0'
-        self.df_final = self.df[LIST_COLUMNS]
+        self.df_final = self.df[LIST_COLUMNS] 
+        # ordonner le dataframe par nom de client puis par date de relevé et enfin par numéro d'arbre
         self.date_debut = datetime.strptime(date_debut, '%m/%d/%Y').date()
         self.date_fin = datetime.strptime(date_fin, '%m/%d/%Y').date()
         self.date_today = datetime.today().date()
@@ -28,7 +30,7 @@ class dataframe:
     
     # Convert
     def convert(self):
-        
+
         date1 = [ x.date() for x in list(self.df_final['Date de relance pour contrôle/suivi'])]
         date2 = [ x.date() for x in list(self.df_final['Date de relance pour intervention 1'])]
         date3 = [ x.date() for x in list(self.df_final['Date de relance pour intervention 2'])]
@@ -40,10 +42,22 @@ class dataframe:
         
         # Ajouter dans la colonne de dataframe
         bool_relance = bool_date1 + bool_date2 + bool_date3
-        self.df_final['Relance mail ce jour '+self.date_today_str] = bool_relance
+        self.df_final['Relance'] = bool_relance
+        self.df_final["Type d'opération"] = (
+            bool_date1*self.df_final["Contrôle/suivi"]
+            + bool_date1 * bool_date2 * " / "
+            + bool_date2 * self.df_final["Intervention 1"]
+            + (bool_date1 * bool_date3 - bool_date2) * " / "
+            + (bool_date2 * bool_date3 - bool_date1) * " / "
+            + bool_date1 * bool_date2 * bool_date3 * " / "
+            + bool_date3 * self.df_final["Intervention 2"]
+            )
+        """ self.df_final['Deadline'] = "minimum des dates de relance à l'intérieur de l'intervale"
+        + timedelta(days=90) """
+
         #print(self.df_final['Relance mail ce jour '+self.date_today_str])
     
     def get_info_user_relance(self):
         # Retourner tous les infos du clients aui ont le date de relance aujourd'hui
         #print(self.df_final[self.df_final['Relance mail ce jour '+self.date_today_str]==True])
-        return self.df_final[self.df_final['Relance mail ce jour '+self.date_today_str]==True]
+        return self.df_final[self.df_final['Relance']==True]
