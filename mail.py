@@ -90,7 +90,7 @@ class mail:
 
             print("final_message =", message)
                 
-            email_messages.append(message)
+            email_messages.append([nom,ligne_info_client["Site"].iloc[0],message])
 
         return email_messages
 
@@ -107,9 +107,9 @@ class mail:
             # vérifier unicité mail dans cellule du dataframe
             # modifier self.email_sender en self.recipients.iloc[i]['Coordonnées mail']
             msg['Subject'] = "ONF : pensez à réaliser le suivi de votre patrimoine arboré %s" % (
-                self.recipients["Site"].iloc[i])
+                self.email_messages[i][1])
         
-            msg.attach(MIMEText(self.email_messages[i], 'plain'))
+            msg.attach(MIMEText(self.email_messages[i][2], 'plain'))
         
             if attachment_location != '':
                 filename = os.path.basename(attachment_location)
@@ -141,10 +141,10 @@ class mail:
     def create_draft(self):
 
         for i in range(len(self.email_messages)):
-            print("site = ", self.recipients["Site"].iloc[i])
+            #print("site = ", self.recipients["Site"].iloc[i])
 
             try:
-                print("site = ", self.recipients["Site"].iloc[i])
+                #print("site = ", self.recipients["Site"].iloc[i])
                 tls_context = ssl.create_default_context()
                 server = imaplib.IMAP4('outlook.office365.com')
                 server.starttls(ssl_context=tls_context)
@@ -158,8 +158,8 @@ class mail:
                 # vérifier unicité mail dans cellule du dataframe
                 # modifier self.email_sender en self.recipients.iloc[i]['Coordonnées mail']
                 new_message["Subject"] = "ONF : pensez à réaliser le suivi de votre patrimoine arboré %s" % (
-                    self.recipients["Site"].iloc[i])
-                new_message.set_payload(self.email_messages[i])
+                    self.email_messages[i][1])
+                new_message.set_payload(self.email_messages[i][2])
                 # Fix special characters by setting the same encoding we'll use later to encode the message
                 new_message.set_charset(email.charset.Charset("utf-8"))
                 encoded_message = str(new_message).encode("utf-8")
