@@ -25,7 +25,7 @@ class mail:
         self.email_sender = email_sender
         self.password = password
         self.dataframe = dataframe.sort_values(by=['Nom du client','Date de relance'])
-        self.recipients = self.dataframe[self.dataframe['Nom du client'] == self.dataframe['Nom du client'].unique()] # A MODIFIER cf commentaires ci dessous
+        self.recipients = self.dataframe['Nom du client'].unique() # A MODIFIER cf commentaires ci dessous
         # Récupérer les clients distincts dans dataframe (qui doit être ordonné dans dataframe.py)
         # pour chaque client récupérer la première ligne en brut dans un premier temps... puis améliorer
         self.email_messages = self.email_infos()
@@ -34,10 +34,12 @@ class mail:
 
     def email_infos(self):
         # récupérer les infos du dataframe et insérer les variables dans une liste de messages
-        clients_infos = self.recipients
+        clients_infos = self.recipients # liste du nom des clients
         trees_infos = self.dataframe
         email_messages = []
-        for i in range(len(clients_infos)):
+        for nom in clients_infos:
+            # prendre la 1ere ligne
+            ligne_info_client = trees_infos[trees_infos['Nom du client']==nom][1:] 
             message = "Madame, Monsieur %s, \
                 \n\nNos équipes sont intervenues durant le mois de %s %s, \
                 pour réaliser un inventaire ainsi qu’un diagnostic visuel et sonore \
@@ -45,17 +47,17 @@ class mail:
                 \n\nA l’issu de cette intervention, nous avons effectué des préconisations \
                 de suivis et travaux pour les arbres qui présentaient des défauts en évolution. \
                 \n\nSont concernés par ces préconisations :" % (
-                    clients_infos.iloc[i]["Nom du client"],
-                    clients_infos.iloc[i]["Date du relevé"].date().month,
-                    clients_infos.iloc[i]["Date du relevé"].date().year,
-                    clients_infos.iloc[i]["Site"]
+                    ligne_info_client["Nom du client"],
+                    ligne_info_client["Date du relevé"].date().month,
+                    ligne_info_client["Date du relevé"].date().year,
+                    ligne_info_client["Site"]
                 )
             
-            client_trees = trees_infos[trees_infos["Nom du client"]==clients_infos.iloc[i]["Nom du client"]]
+            client_trees = trees_infos[trees_infos['Nom du client']==nom]
             print(client_trees)
             
             for j in range(len(client_trees)):
-                print(clients_infos.iloc[i]["Type d’opération"])
+                #print(clients_infos.iloc[i]["Type d’opération"])
                 print(client_trees.iloc[j]["Type d’opération"])
                 addendum = "\n\n- %s : \
                 \narbre numéro %d, %s, situé aux coordonnées [%f, %f]" % (

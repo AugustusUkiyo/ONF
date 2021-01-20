@@ -113,17 +113,6 @@ def verify_trees_button():
             #else:
             #    msg = "Il n'y a pas de relance à effectuer"
             #messagebox.showinfo(title="Information", message=msg)
-            
-            if email_entry.get() != '' and password_entry.get() != '':
-                # Creer objet mail
-                #mail_return = mail.mail(email_entry.get(), password_entry.get(), df_return)
-                mail_return = mail.mail(df_return)
-                msg = "L'email et le mot de passe ont bien été renseignés"
-                messagebox.showinfo(title="Information ", message=msg)          
-            else:
-                msg = "Merci de renseigner les champs 'email' et 'mot de passe' svp"
-                messagebox.showerror(title="Erreur", message=msg)
-
     else:
         msg = "Veuillez choisir la date de début et la date de fin pour la période de vérification des relances à considérer."
         messagebox.showerror(title="Erreur", message=msg)
@@ -135,72 +124,91 @@ def produce_mail_button():
     Retourne un message d'informations sur le nombre de clients \
     pour qui on va créer un brouillon
     """
-    try:
-        if len(mail_return.dataframe_user) != 0:
-            if len(mail_return.dataframe_user) > 1:
-                msg = "Vous allez créer "+str(len(mail_return.dataframe_user))+" brouillons"
-                messagebox.askokcancel(title="Génération de mail", message=msg)
-                mail_return.create_draft()
-                # étape de vérification
-                msg = "Les brouillons ont bien été créés"
-                messagebox.showinfo(title="Génération de mail", message=msg)
-
-            elif len(mail_return.dataframe_user) == 1:
-                msg = "Vous allez créer un brouillon"
-                messagebox.askokcancel(title="Génération de mail", message=msg)
-                mail_return.create_draft()
-                # étape de vérification
-                msg = "Le brouillon a bien été créé"
-                messagebox.showinfo(title="Génération de mail", message=msg)   
-
-            # save last utilisation date in db
-            file = open("db.txt","a") 
-            l = datetime.today().strftime('%m/%d/%Y')
-            file.write(l+"\n") 
-            file.close()
-                
-        else:
-            msg = "Il n'y a aucun mail à générer"
-            messagebox.showinfo(title="Génération de mail", message=msg)
+    if email_entry.get() != '' and password_entry.get() != '':
+        # Creer objet mail
+        #mail_return = mail.mail(email_entry.get(), password_entry.get(), df_return)
+        mail_return = mail.mail(df_return)
+        msg = "L'email et le mot de passe ont bien été renseignés"
+        messagebox.showinfo(title="Information ", message=msg)          
             
-    except:
-        msg = "Il faut appuyer sur le bouton 'Vérification des arbres' d'abord."
-        messagebox.showerror(title="Erreur", message=msg)
+        try:
+            if len(mail_return.dataframe_user) != 0:
+                if len(mail_return.dataframe_user) > 1:
+                    msg = "Vous allez créer "+str(len(mail_return.dataframe_user))+" brouillons"
+                    messagebox.askokcancel(title="Génération de mail", message=msg)
+                    mail_return.create_draft()
+                    # étape de vérification
+                    msg = "Les brouillons ont bien été créés"
+                    messagebox.showinfo(title="Génération de mail", message=msg)
     
+                elif len(mail_return.dataframe_user) == 1:
+                    msg = "Vous allez créer un brouillon"
+                    messagebox.askokcancel(title="Génération de mail", message=msg)
+                    mail_return.create_draft()
+                    # étape de vérification
+                    msg = "Le brouillon a bien été créé"
+                    messagebox.showinfo(title="Génération de mail", message=msg)   
+    
+                # save last utilisation date in db
+                file = open("db.txt","a") 
+                l = datetime.today().strftime('%m/%d/%Y')
+                file.write(l+"\n") 
+                file.close()
+                    
+            else:
+                msg = "Il n'y a aucun mail à générer"
+                messagebox.showinfo(title="Génération de mail", message=msg)
+                
+        except:
+            msg = "Il faut appuyer sur le bouton 'Vérification des arbres' d'abord."
+            messagebox.showerror(title="Erreur", message=msg)
+    else:
+        msg = "Merci de renseigner les champs 'email' et 'mot de passe' svp"
+        messagebox.showerror(title="Erreur", message=msg)
+                
 def send_mail_button():
     """
     Retourne un message d'informations sur le nombre de clients \
     pour qui on va envoyer un mail
     """
-    try:
-        if len(mail_return.dataframe_user) != 0:
-            if len(mail_return.dataframe_user) > 1:
-                msg ="Vous allez envoyer "+str(len(mail_return.dataframe_user))+" mails"
-                messagebox.askokcancel(title="Envoi de mail", message=msg)
-                mail_return.send_emails()
-                # étape de vérification
-                msg = "Les mails ont bien été envoyés"
-                messagebox.showinfo(title="Envoi de mail", message=msg)
-            elif len(mail_return.dataframe_user) == 1:
-                msg ="Vous allez envoyer un mail"
-                messagebox.askokcancel(title="Envoi de mail", message=msg)
-                mail_return.send_emails()
-                # étape de vérification
-                msg = "Le mail a bien été envoyé"
-                messagebox.showinfo(title="Envoi de mail", message=msg)
-
-            # save last utilisation date in db
-            file = open("db.txt","a") 
-            l = datetime.today().strftime('%m/%d/%Y')
-            file.write(l+"\n") 
-            file.close()
-            
-        else:
-            msg = "Il n'y a aucun mail à envoyer"
-            messagebox.showinfo(title="Envoi de mail", message=msg)
+    if email_entry.get() != '' and password_entry.get() != '':
+        # Creer objet mail
+        #mail_return = mail.mail(email_entry.get(), password_entry.get(), df_return)
+        mail_return = mail.mail(df_return)
+        msg = "L'email et le mot de passe ont bien été renseignés"
+        messagebox.showinfo(title="Information ", message=msg)
+        try:
+            if len(mail_return.dataframe_user) != 0:
+                if len(mail_return.dataframe_user) > 1:
+                    msg ="Vous allez envoyer "+str(len(mail_return.dataframe_user))+" mails"
+                    messagebox.askokcancel(title="Envoi de mail", message=msg)
+                    mail_return.send_emails()
+                    # étape de vérification
+                    msg = "Les mails ont bien été envoyés"
+                    messagebox.showinfo(title="Envoi de mail", message=msg)
+                elif len(mail_return.dataframe_user) == 1:
+                    msg ="Vous allez envoyer un mail"
+                    messagebox.askokcancel(title="Envoi de mail", message=msg)
+                    mail_return.send_emails()
+                    # étape de vérification
+                    msg = "Le mail a bien été envoyé"
+                    messagebox.showinfo(title="Envoi de mail", message=msg)
     
-    except:
-        msg = "Il faut appuyer sur le bouton 'Vérification des arbres' d'abord."
+                # save last utilisation date in db
+                file = open("db.txt","a") 
+                l = datetime.today().strftime('%m/%d/%Y')
+                file.write(l+"\n") 
+                file.close()
+                
+            else:
+                msg = "Il n'y a aucun mail à envoyer"
+                messagebox.showinfo(title="Envoi de mail", message=msg)
+        
+        except:
+            msg = "Il faut appuyer sur le bouton 'Vérification des arbres' d'abord."
+            messagebox.showerror(title="Erreur", message=msg)
+    else:
+        msg = "Merci de renseigner les champs 'email' et 'mot de passe' svp"
         messagebox.showerror(title="Erreur", message=msg)
     
 # Create window
