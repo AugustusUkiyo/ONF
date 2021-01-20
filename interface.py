@@ -94,7 +94,7 @@ def verify_trees_button():
             df = dataframe.dataframe(filename, date_debut, date_fin)
             df.convert()
             print("test convert")
-            global mail_return 
+            global df_return 
             df_return = df.get_info_user_relance()
             print("test return")
             print(len(df_return))
@@ -151,7 +151,7 @@ def produce_mail_button():
     
                 # save last utilisation date in db
                 file = open("db.txt","a") 
-                l = datetime.today().strftime('%m/%d/%Y')
+                l = max(df_return['Date de relance']).strftime('%m/%d/%Y')
                 file.write(l+"\n") 
                 file.close()
                     
@@ -196,7 +196,7 @@ def send_mail_button():
     
                 # save last utilisation date in db
                 file = open("db.txt","a") 
-                l = datetime.today().strftime('%m/%d/%Y')
+                l = max(df_return['Date de relance']).strftime('%m/%d/%Y')
                 file.write(l+"\n") 
                 file.close()
                 
