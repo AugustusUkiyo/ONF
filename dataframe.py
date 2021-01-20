@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+ #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Wed Dec  9 12:45:41 2020
@@ -40,17 +40,37 @@ class dataframe:
         bool_date2 = np.array([ self.date_debut <= y and self.date_fin >= y for y in date2])
         bool_date3 = np.array([ self.date_debut <= y and self.date_fin >= y for y in date3])
         
+        date_relance = []
+        for i in range(len(bool_date1)):
+            if bool_date1[i] == True and bool_date2[i] == True and bool_date3[i] == True:
+                date_relance.append(min(date1[i],date2[i],date3[i]))
+            elif bool_date1[i] == True and bool_date2[i] == True:
+                date_relance.append(min(date1[i],date2[i]))
+            elif bool_date1[i] == True and bool_date3[i] == True:
+                date_relance.append(min(date1[i],date3[i]))
+            elif bool_date2[i] == True and bool_date3[i] == True:
+                date_relance.append(min(date2[i],date3[i]))
+            elif bool_date1[i] == True :
+                date_relance.append(date1[i])
+            elif bool_date2[i] == True :
+                date_relance.append(date2[i])
+            elif bool_date3[i] == True :
+                date_relance.append(date3[i])
+            else:
+                date_relance.append(None)
+        
         # Ajouter dans la colonne de dataframe
         bool_relance = bool_date1 + bool_date2 + bool_date3
         self.df_final['Relance'] = bool_relance
+        self.df_final['Date de relance'] = date_relance
         self.df_final["Type d'opération"] = (
-            bool_date1*self.df_final["Contrôle/suivi"]
+            bool_date1*self.df_final["Type de contrôle/suivi"]
             + bool_date1 * bool_date2 * " / "
-            + bool_date2 * self.df_final["Intervention 1"]
+            + bool_date2 * self.df_final["Type d'intervention 1"]
             + (bool_date1 * bool_date3 - bool_date2) * " / "
             + (bool_date2 * bool_date3 - bool_date1) * " / "
             + bool_date1 * bool_date2 * bool_date3 * " / "
-            + bool_date3 * self.df_final["Intervention 2"]
+            + bool_date3 * self.df_final["Type d'intervention 2"]
             )
         """ self.df_final['Deadline'] = "minimum des dates de relance à l'intérieur de l'intervale"
         + timedelta(days=90) """

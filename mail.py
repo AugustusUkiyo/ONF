@@ -24,7 +24,7 @@ class mail:
     def __init__(self, dataframe_user, email_sender='gemalabonf@outlook.fr', password='Test_pour_Appli'):
         self.email_sender = email_sender
         self.password = password
-        self.dataframe_user = dataframe_user
+        self.dataframe_user = dataframe_user.sort_values(by=['Nom du client','Date de relance'])
         self.recipients = dataframe_user # A MODIFIER cf commentaires ci dessous
         # Récupérer les clients distincts dans dataframe_user (qui doit être ordonné dans dataframe.py)
         # pour chaque client récupérer la première ligne en brut dans un premier temps... puis améliorer

@@ -88,29 +88,29 @@ def verify_trees_button():
         date_debut, date_fin = get_date()
         
         try:
-            print(date_debut)
-            print(date_fin)
+            #print(date_debut)
+            #print(date_fin)
             filename = source_excel_entry.get()
-            print("ok 1")
+            #print("ok 1")
             df = dataframe.dataframe(filename, date_debut, date_fin)
             df.convert()
             global mail_return 
             df_return = df.get_info_user_relance()
-            msg = "Le fichier excel a bien été analysé"
-            messagebox.showinfo(title="Information", message=msg)
+            #msg = "Le fichier excel a bien été analysé"
+            #messagebox.showinfo(title="Information", message=msg)
             
         except:
-            msg = "Il est nécessaire d'ouvrir le fichier excel dans un premier temps"
-            messagebox.showerror(title="Erreur", message=msg)
+            msg = "Il n'y a pas de relance à effectuer"
+            messagebox.showinfo(title="Information", message=msg)
 
         else:
             if len(df_return) > 1:
                 msg = "Il y a "+str(len(df_return))+" arbres pour lesquels une relance est à effectuer"
             elif len(df_return) == 1:
                 msg = "Il y a un arbre pour lequel une relance est à effectuer"
-            else:
-                msg = "Il n'y a pas de relance à effectuer"
-            messagebox.showinfo(title="Information", message=msg)
+            #else:
+            #    msg = "Il n'y a pas de relance à effectuer"
+            #messagebox.showinfo(title="Information", message=msg)
             
             if email_entry.get() != '' and password_entry.get() != '':
                 # Creer objet mail
