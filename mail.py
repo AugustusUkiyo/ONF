@@ -21,19 +21,21 @@ import time
 
 
 class mail:
-    def __init__(self, dataframe_user, email_sender='gemalabonf@outlook.fr', password='Test_pour_Appli'):
+    def __init__(self, dataframe, email_sender='gemalabonf@outlook.fr', password='Test_pour_Appli'):
         self.email_sender = email_sender
         self.password = password
-        self.dataframe_user = dataframe_user.sort_values(by=['Nom du client','Date de relance'])
-        self.recipients = self.dataframe_user # A MODIFIER cf commentaires ci dessous
-        # Récupérer les clients distincts dans dataframe_user (qui doit être ordonné dans dataframe.py)
+        self.dataframe = dataframe.sort_values(by=['Nom du client','Date de relance'])
+        self.recipients = self.dataframe[self.dataframe['Nom du client'] == self.dataframe['Nom du client'].unique()] # A MODIFIER cf commentaires ci dessous
+        # Récupérer les clients distincts dans dataframe (qui doit être ordonné dans dataframe.py)
         # pour chaque client récupérer la première ligne en brut dans un premier temps... puis améliorer
         self.email_messages = self.email_infos()
+
+        print(self.recipients)
 
     def email_infos(self):
         # récupérer les infos du dataframe et insérer les variables dans une liste de messages
         clients_infos = self.recipients
-        trees_infos = self.dataframe_user
+        trees_infos = self.dataframe
         email_messages = []
         for i in range(len(clients_infos)):
             message = "Madame, Monsieur %s, \
@@ -53,6 +55,8 @@ class mail:
             print(client_trees)
             
             for j in range(len(client_trees)):
+                print(clients_infos.iloc[i]["Type d’opération"])
+                print(client_trees.iloc[j]["Type d’opération"])
                 addendum = "\n\n- %s : \
                 \narbre numéro %d, %s, situé aux coordonnées [%f, %f]" % (
                     client_trees.iloc[j]["Type d’opération"],
@@ -68,7 +72,7 @@ class mail:
             Nous vous invitons à recontacter votre interlocuteur ONF avant le %s, \
             si vous souhaitez effectuer un contrôle de ces arbres. \
             \n\n\nL’équipe ONF" % (
-                "clients_infos.iloc[i]['Deadline']" # à modifier
+                clients_infos.iloc[i]['Deadline']
             )
                 
             email_messages.append(message)
