@@ -8,6 +8,7 @@ Created on Wed Dec  9 12:45:40 2020
 
 
 from tkinter import *
+from tkinter import font
 from tkinter import messagebox
 from tkinter import filedialog
 from tkinter import ttk
@@ -22,32 +23,30 @@ from datetime import timedelta
 def get_date():
     """
     """
-    if combo1.get() == 'Date actuelle':
-        date_debut = datetime.today().strftime('%m/%d/%Y')
-    else:
-        # read db to get last utilisation
+    if combo.get() == 'Dernière relance':
+
         fileHandle = open ( 'db.txt',"r" )
         lineList = fileHandle.readlines()
         fileHandle.close()
         date_debut = (datetime.strptime(lineList[len(lineList)-1][:-1], '%m/%d/%Y')).strftime('%m/%d/%Y')
     
-    if combo2.get() =='Date actuelle':
-        date_fin = datetime.today().date().strftime('%m/%d/%Y')
     else:
         
-        if combo2.get() =="1 semaine":
-            date_fin = (datetime.today().date() + timedelta(days=7)).strftime('%m/%d/%Y')
-        if combo2.get() =="2 semaines":
-            date_fin = (datetime.today().date() + timedelta(days=14)).strftime('%m/%d/%Y')
-        if combo2.get() =="3 semaines":
-            date_fin = (datetime.today().date() + timedelta(days=21)).strftime('%m/%d/%Y')
-        if combo2.get() =="1 mois":
-            date_fin = (datetime.today().date() + timedelta(days=30)).strftime('%m/%d/%Y')
-        if combo2.get() =="2 mois":
-            date_fin = (datetime.today().date() + timedelta(days=60)).strftime('%m/%d/%Y')
-        if combo2.get() =="3 mois":
-            date_fin = (datetime.today().date() + timedelta(days=120)).strftime('%m/%d/%Y')
+        if combo.get() =="1 semaine":
+            date_debut = (datetime.today().date() - timedelta(days=7)).strftime('%m/%d/%Y')
+        if combo.get() =="2 semaines":
+            date_debut = (datetime.today().date() - timedelta(days=14)).strftime('%m/%d/%Y')
+        if combo.get() =="3 semaines":
+            date_debut = (datetime.today().date() - timedelta(days=21)).strftime('%m/%d/%Y')
+        if combo.get() =="1 mois":
+            date_debut = (datetime.today().date() - timedelta(days=30)).strftime('%m/%d/%Y')
+        if combo.get() =="2 mois":
+            date_debut = (datetime.today().date() - timedelta(days=60)).strftime('%m/%d/%Y')
+        if combo.get() =="3 mois":
+            date_debut = (datetime.today().date() - timedelta(days=90)).strftime('%m/%d/%Y')
     
+    date_fin = datetime.today().date().strftime('%m/%d/%Y')
+
     return date_debut, date_fin      
     
 
@@ -84,18 +83,21 @@ def verify_trees_button():
     """
     #Excel = source_excel_entry.get()
     # Messagebox
-    if combo1.get() != '' and combo2.get() != '':
+    if combo.get() != '':
         date_debut, date_fin = get_date()
         
         try:
-            #print(date_debut)
-            #print(date_fin)
+            print(date_debut)
+            print(date_fin)
             filename = source_excel_entry.get()
-            #print("ok 1")
+            print(filename)
             df = dataframe.dataframe(filename, date_debut, date_fin)
             df.convert()
+            print("test convert")
             global mail_return 
             df_return = df.get_info_user_relance()
+            print("test return")
+            print(len(df_return))
             #msg = "Le fichier excel a bien été analysé"
             #messagebox.showinfo(title="Information", message=msg)
             
@@ -204,54 +206,64 @@ def send_mail_button():
 # Create window
 window = Tk()
 window.title("Arbre Conseil ® - Relances clients")
-window.config(padx=20, pady=20)
+window.config(padx=24, pady=24)
 
 # Canvas
-canvas = Canvas(width=200, height=200)
+canvas = Canvas(master=window, width=200, height=200)
 logo_img = PhotoImage(file="logo.png")
-canvas.create_image(100,100,image=logo_img)
-canvas.grid(row=0,column=1)
+canvas.create_image(100,100,anchor=CENTER,image=logo_img)
+canvas.grid(row=0,column=0,columnspan=2)
 
 # Labels
-source_excel = Label(text="Fichier Excel")
-source_excel.grid(row=1, column=0)
-email_label = Label(text="Email outlook")
-email_label.grid(row=2, column=0)
-password_label = Label(text="Mot de passe")
-password_label.grid(row=3, column=0)
-combo1 = Label(text="Date de début")
-combo1.grid(row=4, column=0)
-combo2 = Label(text="Date de fin")
-combo2.grid(row=5, column=0)
+source_excel = Label(text="Fichier Excel :  ", justify=LEFT, anchor="w")
+source_excel.grid(row=1, column=0, sticky=W)
+email_label = Label(text="Email outlook :  ", justify=LEFT, anchor="w")
+email_label.grid(row=7, column=0, sticky=W)
+password_label = Label(text="Mot de passe :  ", justify=LEFT, anchor="w")
+password_label.grid(row=8, column=0, sticky=W)
 
+lastmail = Label(text="Dernière relance :  ", justify=LEFT, anchor="w")
+lastmail.grid(row=3, column=0, sticky=W)
+fileHandle = open ( 'db.txt',"r" )
+lastmail_value_text = fileHandle.readlines()
+fileHandle.close()
+lastmail_value_text = (datetime.strptime(lastmail_value_text[len(lastmail_value_text)-1][:-1], '%m/%d/%Y')).strftime('%m/%d/%Y')
+lastmail_value = Label(text=str(lastmail_value_text))
+lastmail_value.grid(row=3, column=1)
+
+combo = Label(text="Vérifier relances depuis :  ", justify=LEFT, anchor="w")
+combo.grid(row=4, column=0, sticky=W)
+until = Label(text="Jusqu'à :  ", justify=LEFT, anchor="w")
+until.grid(row=5, column=0, sticky=W)
+until_value = Label(text="Aujourd'hui : (" + datetime.today().date().strftime('%m/%d/%Y') + ")")
+until_value.grid(row=5, column=1)
 
 # Entries
 source_excel_entry = Entry(width=35)
 source_excel_entry.grid(row=1, column=1)
 email_entry = Entry(width=35)
-email_entry.grid(row=2,column=1)
+email_entry.grid(row=7,column=1)
 email_entry.focus()
 password_entry = Entry(width=35, show='*')
-password_entry.grid(row=3, column=1)
+password_entry.grid(row=8, column=1)
 
 # Combobox
-combo1 = ttk.Combobox(values=["Dernière utilisation", "Date actuelle"],width=34)
-combo1.grid(row=4, column=1)
-combo2 = ttk.Combobox(values=["Date actuelle","1 semaine","2 semaines","3 semaines","1 mois","2 mois","3 mois"],width=34)
-combo2.grid(row=5, column=1)
+combo = ttk.Combobox(values=["Dernière relance", "1 semaine","2 semaines","3 semaines","1 mois","2 mois","3 mois"], width=32, state="readonly")
+combo.grid(row=4, column=1)
 
 # Button
 # Open file excel
-open_file_button = Button(text="Ouvrir fichier Excel",command=open_file_excel)
-open_file_button.grid(row=1, column=3)
+open_file_font = font.Font(size=8, weight='bold')
+open_file_button = Button(text="Ouvrir fichier Excel",bd=3,font=open_file_font,width=29,command=open_file_excel)
+open_file_button.grid(row=2, column=1)
 # Verify contenu file Excel
-verify_button = Button(text="Vérification des arbres",width=25,command=verify_trees_button)
+verify_button = Button(text="Vérification des arbres",bd=3,width=29,command=verify_trees_button)
 verify_button.grid(row=6, column=1)
 # Create crafts
-produce_mail_button = Button(text="Créer des brouillons de mails",width=25,command=produce_mail_button)
-produce_mail_button.grid(row=7, column=1)
+produce_mail_button = Button(text="Créer des brouillons de mails",bd=3,width=29,command=produce_mail_button)
+produce_mail_button.grid(row=9, column=1)
 # Send mail
-send_mail_button = Button(text="Créer et envoyer des mails",width=25,command=send_mail_button)
-send_mail_button.grid(row=8, column=1)
+send_mail_button = Button(text="Créer et envoyer des mails",bd=3,width=29,command=send_mail_button)
+send_mail_button.grid(row=10, column=1)
 
 window.mainloop()

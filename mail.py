@@ -25,7 +25,7 @@ class mail:
         self.email_sender = email_sender
         self.password = password
         self.dataframe_user = dataframe_user.sort_values(by=['Nom du client','Date de relance'])
-        self.recipients = dataframe_user # A MODIFIER cf commentaires ci dessous
+        self.recipients = self.dataframe_user # A MODIFIER cf commentaires ci dessous
         # Récupérer les clients distincts dans dataframe_user (qui doit être ordonné dans dataframe.py)
         # pour chaque client récupérer la première ligne en brut dans un premier temps... puis améliorer
         self.email_messages = self.email_infos()
@@ -50,6 +50,7 @@ class mail:
                 )
             
             client_trees = trees_infos[trees_infos["Nom du client"]==clients_infos.iloc[i]["Nom du client"]]
+            print(client_trees)
             
             for j in range(len(client_trees)):
                 addendum = "\n\n- %s : \
