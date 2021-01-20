@@ -110,9 +110,11 @@ def verify_trees_button():
                 msg = "Il y a "+str(len(df_return))+" arbres pour lesquels une relance est à effectuer"
             elif len(df_return) == 1:
                 msg = "Il y a un arbre pour lequel une relance est à effectuer"
-            #else:
-            #    msg = "Il n'y a pas de relance à effectuer"
-            #messagebox.showinfo(title="Information", message=msg)
+            # else:
+                #msg = "Il n'y a pas de relance à effectuer"
+
+            messagebox.showinfo(title="Information", message=msg)
+
     else:
         msg = "Veuillez choisir la date de début et la date de fin pour la période de vérification des relances à considérer."
         messagebox.showerror(title="Erreur", message=msg)
@@ -127,14 +129,14 @@ def produce_mail_button():
     if email_entry.get() != '' and password_entry.get() != '':
         # Creer objet mail
         #mail_return = mail.mail(email_entry.get(), password_entry.get(), df_return)
-        mail_return = mail.mail(df_return)
+        mail_return = mail.mail(df_return, email_entry.get(), password_entry.get())
         msg = "L'email et le mot de passe ont bien été renseignés"
         messagebox.showinfo(title="Information ", message=msg)          
             
         try:
             if len(mail_return.dataframe) != 0:
                 if len(mail_return.dataframe) > 1:
-                    msg = "Vous allez créer "+str(len(mail_return.dataframe))+" brouillons"
+                    msg = "Vous allez créer "+str(len(mail_return.email_messages))+" brouillons"
                     messagebox.askokcancel(title="Génération de mail", message=msg)
                     mail_return.create_draft()
                     # étape de vérification
@@ -150,10 +152,10 @@ def produce_mail_button():
                     messagebox.showinfo(title="Génération de mail", message=msg)   
     
                 # save last utilisation date in db
-                """file = open("db.txt","a") 
+                file = open("db.txt","a") 
                 l = max(df_return['Date de relance']).strftime('%m/%d/%Y')
                 file.write(l+"\n") 
-                file.close()"""
+                file.close()
                     
             else:
                 msg = "Il n'y a aucun mail à générer"
@@ -174,13 +176,13 @@ def send_mail_button():
     if email_entry.get() != '' and password_entry.get() != '':
         # Creer objet mail
         #mail_return = mail.mail(email_entry.get(), password_entry.get(), df_return)
-        mail_return = mail.mail(df_return)
+        mail_return = mail.mail(df_return, email_entry.get(), password_entry.get())
         msg = "L'email et le mot de passe ont bien été renseignés"
         messagebox.showinfo(title="Information ", message=msg)
         try:
             if len(mail_return.dataframe) != 0:
                 if len(mail_return.dataframe) > 1:
-                    msg ="Vous allez envoyer "+str(len(mail_return.dataframe))+" mails"
+                    msg ="Vous allez envoyer "+str(len(mail_return.email_messages))+" mails"
                     messagebox.askokcancel(title="Envoi de mail", message=msg)
                     mail_return.send_emails()
                     # étape de vérification
@@ -218,7 +220,7 @@ window.config(padx=24, pady=24)
 
 # Canvas
 canvas = Canvas(master=window, width=200, height=200)
-logo_img = PhotoImage(file="logo.png")
+logo_img = PhotoImage(file="LOGO ONF 2014.png")
 canvas.create_image(100,100,anchor=CENTER,image=logo_img)
 canvas.grid(row=0,column=0,columnspan=2)
 
