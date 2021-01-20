@@ -132,16 +132,16 @@ def produce_mail_button():
         messagebox.showinfo(title="Information ", message=msg)          
             
         try:
-            if len(mail_return.dataframe_user) != 0:
-                if len(mail_return.dataframe_user) > 1:
-                    msg = "Vous allez créer "+str(len(mail_return.dataframe_user))+" brouillons"
+            if len(mail_return.dataframe) != 0:
+                if len(mail_return.dataframe) > 1:
+                    msg = "Vous allez créer "+str(len(mail_return.dataframe))+" brouillons"
                     messagebox.askokcancel(title="Génération de mail", message=msg)
                     mail_return.create_draft()
                     # étape de vérification
                     msg = "Les brouillons ont bien été créés"
                     messagebox.showinfo(title="Génération de mail", message=msg)
     
-                elif len(mail_return.dataframe_user) == 1:
+                elif len(mail_return.dataframe) == 1:
                     msg = "Vous allez créer un brouillon"
                     messagebox.askokcancel(title="Génération de mail", message=msg)
                     mail_return.create_draft()
@@ -150,10 +150,10 @@ def produce_mail_button():
                     messagebox.showinfo(title="Génération de mail", message=msg)   
     
                 # save last utilisation date in db
-                file = open("db.txt","a") 
+                """file = open("db.txt","a") 
                 l = max(df_return['Date de relance']).strftime('%m/%d/%Y')
                 file.write(l+"\n") 
-                file.close()
+                file.close()"""
                     
             else:
                 msg = "Il n'y a aucun mail à générer"
@@ -178,15 +178,15 @@ def send_mail_button():
         msg = "L'email et le mot de passe ont bien été renseignés"
         messagebox.showinfo(title="Information ", message=msg)
         try:
-            if len(mail_return.dataframe_user) != 0:
-                if len(mail_return.dataframe_user) > 1:
-                    msg ="Vous allez envoyer "+str(len(mail_return.dataframe_user))+" mails"
+            if len(mail_return.dataframe) != 0:
+                if len(mail_return.dataframe) > 1:
+                    msg ="Vous allez envoyer "+str(len(mail_return.dataframe))+" mails"
                     messagebox.askokcancel(title="Envoi de mail", message=msg)
                     mail_return.send_emails()
                     # étape de vérification
                     msg = "Les mails ont bien été envoyés"
                     messagebox.showinfo(title="Envoi de mail", message=msg)
-                elif len(mail_return.dataframe_user) == 1:
+                elif len(mail_return.dataframe) == 1:
                     msg ="Vous allez envoyer un mail"
                     messagebox.askokcancel(title="Envoi de mail", message=msg)
                     mail_return.send_emails()

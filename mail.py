@@ -25,21 +25,30 @@ class mail:
         self.email_sender = email_sender
         self.password = password
         self.dataframe = dataframe.sort_values(by=['Nom du client','Date de relance'])
+        print(self.dataframe)
         self.recipients = self.dataframe['Nom du client'].unique() # A MODIFIER cf commentaires ci dessous
         # Récupérer les clients distincts dans dataframe (qui doit être ordonné dans dataframe.py)
         # pour chaque client récupérer la première ligne en brut dans un premier temps... puis améliorer
-        self.email_messages = self.email_infos()
-
         print(self.recipients)
+
+        self.email_messages = self.email_infos()
 
     def email_infos(self):
         # récupérer les infos du dataframe et insérer les variables dans une liste de messages
         clients_infos = self.recipients # liste du nom des clients
+        print(type(clients_infos))
         trees_infos = self.dataframe
         email_messages = []
         for nom in clients_infos:
+            print("nom", nom)
             # prendre la 1ere ligne
-            ligne_info_client = trees_infos[trees_infos['Nom du client']==nom][1:] 
+            print("trees", trees_infos)
+            ligne_info_client = trees_infos[trees_infos['Nom du client']==nom]
+            print("infos_client", ligne_info_client)
+            print("date_relevé", ligne_info_client["Date du relevé"])
+            print("type_date_relevé", type(ligne_info_client["Date du relevé"]))
+            print("date_relevé_slice", ligne_info_client["Date du relevé"].iloc[0])
+            print("type(date_relevé_slice):", type(ligne_info_client["Date du relevé"].iloc[0]))
             message = "Madame, Monsieur %s, \
                 \n\nNos équipes sont intervenues durant le mois de %s %s, \
                 pour réaliser un inventaire ainsi qu’un diagnostic visuel et sonore \
@@ -47,25 +56,27 @@ class mail:
                 \n\nA l’issu de cette intervention, nous avons effectué des préconisations \
                 de suivis et travaux pour les arbres qui présentaient des défauts en évolution. \
                 \n\nSont concernés par ces préconisations :" % (
-                    ligne_info_client["Nom du client"],
-                    ligne_info_client["Date du relevé"].date().month,
-                    ligne_info_client["Date du relevé"].date().year,
-                    ligne_info_client["Site"]
+                    ligne_info_client["Nom du client"].iloc[0],
+                    ligne_info_client["Date du relevé"].iloc[0].date().month,
+                    ligne_info_client["Date du relevé"].iloc[0].date().year,
+                    ligne_info_client["Site"].iloc[0]
                 )
-            
-            client_trees = trees_infos[trees_infos['Nom du client']==nom]
-            print(client_trees)
-            
-            for j in range(len(client_trees)):
+            ligne_info_client = trees_infos[trees_infos['Nom du client']==nom]
+            print(message)
+            print("deadline =", ligne_info_client["Deadline"].iloc[0])
+            print("opération =", ligne_info_client["Type d'opération"].iloc[0])
+
+            for j in range(len(ligne_info_client)):
+                print(j)
                 #print(clients_infos.iloc[i]["Type d’opération"])
-                print(client_trees.iloc[j]["Type d’opération"])
+                print(ligne_info_client["Type d'opération"].iloc[j])
                 addendum = "\n\n- %s : \
                 \narbre numéro %d, %s, situé aux coordonnées [%f, %f]" % (
-                    client_trees.iloc[j]["Type d’opération"],
-                    client_trees.iloc[j]['Numéro de l\'arbre'], 
-                    client_trees.iloc[j]["Nom français de l\'arbre"], 
-                    client_trees.iloc[j]['x'], 
-                    client_trees.iloc[j]['y']
+                    ligne_info_client["Type d'opération"].iloc[j],
+                    ligne_info_client['Numéro de l\'arbre'].iloc[j], 
+                    ligne_info_client["Nom français de l\'arbre"].iloc[j], 
+                    ligne_info_client['x'].iloc[j], 
+                    ligne_info_client['y'].iloc[j]
                 )
                 message = message + addendum
             
@@ -74,8 +85,10 @@ class mail:
             Nous vous invitons à recontacter votre interlocuteur ONF avant le %s, \
             si vous souhaitez effectuer un contrôle de ces arbres. \
             \n\n\nL’équipe ONF" % (
-                clients_infos.iloc[i]['Deadline']
+                ligne_info_client['Deadline'].iloc[0]
             )
+
+            print("final_message =", message)
                 
             email_messages.append(message)
 
@@ -94,7 +107,7 @@ class mail:
             # vérifier unicité mail dans cellule du dataframe
             # modifier self.email_sender en self.recipients.iloc[i]['Coordonnées mail']
             msg['Subject'] = "ONF : pensez à réaliser le suivi de votre patrimoine arboré %s" % (
-                self.recipients.iloc[i]["Site"])
+                self.recipients["Site"].iloc[i])
         
             msg.attach(MIMEText(self.email_messages[i], 'plain'))
         
@@ -128,8 +141,10 @@ class mail:
     def create_draft(self):
 
         for i in range(len(self.email_messages)):
+            print("site = ", self.recipients["Site"].iloc[i])
 
             try:
+                print("site = ", self.recipients["Site"].iloc[i])
                 tls_context = ssl.create_default_context()
                 server = imaplib.IMAP4('outlook.office365.com')
                 server.starttls(ssl_context=tls_context)
@@ -143,7 +158,7 @@ class mail:
                 # vérifier unicité mail dans cellule du dataframe
                 # modifier self.email_sender en self.recipients.iloc[i]['Coordonnées mail']
                 new_message["Subject"] = "ONF : pensez à réaliser le suivi de votre patrimoine arboré %s" % (
-                    self.recipients.iloc[i]["Site"])
+                    self.recipients["Site"].iloc[i])
                 new_message.set_payload(self.email_messages[i])
                 # Fix special characters by setting the same encoding we'll use later to encode the message
                 new_message.set_charset(email.charset.Charset("utf-8"))
