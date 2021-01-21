@@ -178,6 +178,5 @@ class mail:
                 server.close()
             except:
                 print("Server connection error")
-                return False
 
         return True
