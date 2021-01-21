@@ -130,11 +130,13 @@ def produce_mail_button():
     if email_entry.get() != '' and password_entry.get() != '':
         # Creer objet mail
         #mail_return = mail.mail(email_entry.get(), password_entry.get(), df_return)
-        mail_return = mail.mail(df_return, email_entry.get(), password_entry.get())
         msg = "L'email et le mot de passe ont bien été renseignés"
         messagebox.showinfo(title="Information ", message=msg)          
             
         try:
+
+            mail_return = mail.mail(df_return, email_entry.get(), password_entry.get())
+            
             if len(mail_return.dataframe) != 0:
                 if len(mail_return.dataframe) > 1:
                     msg = "Vous allez créer "+str(len(mail_return.email_messages))+" brouillons"
@@ -177,10 +179,12 @@ def send_mail_button():
     if email_entry.get() != '' and password_entry.get() != '':
         # Creer objet mail
         #mail_return = mail.mail(email_entry.get(), password_entry.get(), df_return)
-        mail_return = mail.mail(df_return, email_entry.get(), password_entry.get())
         msg = "L'email et le mot de passe ont bien été renseignés"
         messagebox.showinfo(title="Information ", message=msg)
         try:
+
+            mail_return = mail.mail(df_return, email_entry.get(), password_entry.get())
+
             if len(mail_return.dataframe) != 0:
                 if len(mail_return.dataframe) > 1:
                     msg ="Vous allez envoyer "+str(len(mail_return.email_messages))+" mails"
