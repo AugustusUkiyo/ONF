@@ -1,3 +1,12 @@
-install xlrd
-install pandas
-install numpy
+pip install xlrd
+pip install pandas
+pip install numpy
+pip install openpyxl
+pip install tkinter
+pip install datetime
+pip install smtplib
+pip install email
+pip install os
+pip install imaplib
+pip install ssl
+pip install time

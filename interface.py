@@ -26,7 +26,7 @@ def get_date():
     """
     if combo.get() == 'Dernière relance':
 
-        fileHandle = open ( 'db.txt',"r" )
+        fileHandle = open ('Data/db.txt', "r")
         lineList = fileHandle.readlines()
         fileHandle.close()
         date_debut = (datetime.strptime(lineList[len(lineList)-1][:-1], '%m/%d/%Y')).strftime('%m/%d/%Y')
@@ -155,7 +155,7 @@ def produce_mail_button():
                     messagebox.showinfo(title="Génération de mail", message=msg)   
     
                 # save last utilisation date in db
-                file = open("db.txt","a") 
+                file = open("Data/db.txt", "a")
                 l = max(df_return['Date de relance']).strftime('%m/%d/%Y')
                 file.write(l+"\n") 
                 file.close()
@@ -199,7 +199,7 @@ def send_mail_button():
                 messagebox.showinfo(title="Envoi de mail", message=list_msg)
     
                 # save last utilisation date in db
-                file = open("db.txt","a") 
+                file = open("Data/db.txt", "a")
                 l = max(df_return['Date de relance']).strftime('%m/%d/%Y')
                 file.write(l+"\n") 
                 file.close()
@@ -214,17 +214,17 @@ def send_mail_button():
     else:
         msg = "Merci de renseigner les champs 'email' et 'mot de passe' svp"
         messagebox.showerror(title="Erreur", message=msg)
-    
+
 # Create window
 window = Tk()
-icon = PhotoImage(file = "Logo_ArbreConseil.png")
+icon = PhotoImage(file ="Image/Logo_ArbreConseil.png")
 window.iconphoto(False, icon)
 window.title("Arbre Conseil ® - Relances clients")
 window.config(padx=24, pady=24)
 
 # Canvas
 canvas = Canvas(master=window, width=400, height=200)
-logo_img = PhotoImage(file="Logo_ONF.png")
+logo_img = PhotoImage(file="Image/Logo_ONF.png")
 
 canvas.create_image(202,100,anchor=CENTER,image=logo_img)
 canvas.grid(row=0,column=0,columnspan=2)
@@ -239,7 +239,7 @@ password_label.grid(row=8, column=0, sticky=W)
 
 lastmail = Label(text="Dernière relance :  ", justify=LEFT, anchor="w")
 lastmail.grid(row=3, column=0, sticky=W)
-fileHandle = open ( 'db.txt',"r" )
+fileHandle = open ('Data/db.txt', "r")
 lastmail_value_text = fileHandle.readlines()
 fileHandle.close()
 lastmail_value_text = (datetime.strptime(lastmail_value_text[len(lastmail_value_text)-1][:-1], '%m/%d/%Y')).strftime('%m/%d/%Y')
