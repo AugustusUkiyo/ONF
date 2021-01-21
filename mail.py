@@ -103,6 +103,7 @@ class mail:
     def send_emails(self, attachment_location = ''):
     
         #email_sender = 'gemalabonf@outlook.fr' # 'your_email_address@your_server.com'
+        list_msg = ''
 
         for i in range(len(self.email_messages)):
     
@@ -137,11 +138,12 @@ class mail:
                 # modifier self.email_sender en self.recipients.iloc[i]['Coordonnées mail']
                 print('email sent')
                 server.quit()
+                list_msg += "Le mail a bien été envoyé à "+ self.email_messages[i][0] + "\n"
             except:
                 print("SMPT server connection error")
-                return False
+                list_msg += "Il y a un problem d'envoyer le mail à " + self.email_messages[i][0] + "\n"
 
-        return True
+        return list_msg
 
     # Stocker mail comme brouillon
     def create_draft(self):

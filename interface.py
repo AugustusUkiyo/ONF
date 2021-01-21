@@ -185,17 +185,14 @@ def send_mail_button():
                 if len(mail_return.dataframe) > 1:
                     msg ="Vous allez envoyer "+str(len(mail_return.email_messages))+" mails"
                     messagebox.askokcancel(title="Envoi de mail", message=msg)
-                    mail_return.send_emails()
-                    # étape de vérification
-                    msg = "Les mails ont bien été envoyés"
-                    messagebox.showinfo(title="Envoi de mail", message=msg)
+                    list_msg = mail_return.send_emails()
+                    
                 elif len(mail_return.dataframe) == 1:
                     msg ="Vous allez envoyer un mail"
                     messagebox.askokcancel(title="Envoi de mail", message=msg)
-                    mail_return.send_emails()
-                    # étape de vérification
-                    msg = "Le mail a bien été envoyé"
-                    messagebox.showinfo(title="Envoi de mail", message=msg)
+                    list_msg = mail_return.send_emails()
+
+                messagebox.showinfo(title="Envoi de mail", message=list_msg)
     
                 # save last utilisation date in db
                 file = open("db.txt","a") 
